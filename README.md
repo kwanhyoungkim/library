@@ -48,4 +48,4 @@
 
 
 ## 📚 ERD: 도서 대여 시스템
-![Library ERD](<img width="1060" height="552" alt="Image" src="https://github.com/user-attachments/assets/2c51fdd3-c0fc-42c1-9beb-52bdeef6c314" />)
+![Library ERD]([README.md](../README.md))
