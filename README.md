@@ -43,6 +43,62 @@
 - `DELETE /api/loans/{id}` - 대출 삭제
 
 
-## 📚 ERD: 도서 대여 시스템
+## 🔗 서울도서관 OpenAPI
+- [서울도서관 소장자료 현황정보 OpenAPI](https://data.seoul.go.kr/dataList/OA-15413/S/1/datasetView.do)
 
-![Library ERD](images
+
+## 📌 ERD (Entity Relationship Diagram)
+
+![ERD](./library.png)
+
+---
+
+## 🗃️ 테이블 구조
+
+### 🔹 User (회원)
+
+| 필드명       | 설명         | 타입     |
+|--------------|--------------|----------|
+| `id`         | 회원 고유 ID (PK) | BIGINT |
+| `name`       | 이름         | VARCHAR |
+| `email`      | 이메일       | VARCHAR |
+| `phone`      | 전화번호     | VARCHAR |
+| `created_at` | 가입일       | DATETIME |
+| `updated_at` | 수정일       | DATETIME |
+
+---
+
+### 🔹 Book (도서)
+
+| 필드명        | 설명           | 타입     |
+|---------------|----------------|----------|
+| `id`          | 책 고유 ID (PK)   | BIGINT |
+| `title`       | 제목           | VARCHAR |
+| `author`      | 작가           | VARCHAR |
+| `is_available`| 대여 가능 여부   | BOOLEAN |
+| `created_at`  | 등록일         | DATETIME |
+| `updated_at`  | 수정일         | DATETIME |
+
+---
+
+### 🔹 Rental (대여 기록)
+
+| 필드명        | 설명            | 타입     |
+|---------------|-----------------|----------|
+| `id`          | 대여 기록 ID (PK) | BIGINT |
+| `user_id`     | 회원 고유 ID (FK) | BIGINT |
+| `book_id`     | 책 고유 ID (FK)   | BIGINT |
+| `rent_date`   | 대여 일자        | DATETIME |
+| `return_date` | 반납 일자        | DATETIME |
+
+---
+
+## 🔗 테이블 관계
+
+- `User (1) : (N) Rental`  
+  → 한 명의 회원은 여러 건의 대여 기록을 가질 수 있습니다.
+
+- `Book (1) : (N) Rental`  
+  → 한 권의 책은 여러 번 대여될 수 있습니다.
+
+---
