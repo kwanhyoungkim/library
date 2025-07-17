@@ -6,7 +6,6 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-
 ## 목차
 - [소개](#소개)
 - [기능](#기능)
