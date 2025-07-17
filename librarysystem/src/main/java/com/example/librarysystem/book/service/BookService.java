@@ -48,6 +48,7 @@ public class BookService {
 
         book.setBorrowed(false);
         book.setBorrowedBy(null);
+        bookRepository.save(book);
     }
 
     public void fetchBooksFromOpenApi() {
