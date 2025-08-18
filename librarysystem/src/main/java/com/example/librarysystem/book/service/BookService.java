@@ -1,10 +1,9 @@
 package com.example.librarysystem.book.service;
 
+import com.example.librarysystem.book.dto.BookRentalResponseDto;
 import com.example.librarysystem.book.entity.Book;
 import com.example.librarysystem.book.repository.BookRepository;
-import com.example.librarysystem.user.entity.User;
-import com.example.librarysystem.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,44 +13,21 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
 
-    @Transactional
-    public void borrowBook(String bookId, Long userId) {
-        Book book = bookRepository.findByBookId(bookId)
-                .orElseThrow(() -> new RuntimeException("도서 없음"));
-
-        if (book.isBorrowed()) {
-            throw new IllegalStateException("이미 대여된 도서입니다.");
-        }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자 없음"));
-
-        book.setBorrowed(true);
-        book.setBorrowedBy(user);
+    @PostConstruct
+    // 도서 등록 (중복 bookId 방지)
+    public void init() {
+        fetchBooksFromOpenApi();
     }
 
-    @Transactional
-    public void returnBook(String bookId, String userId) {
-        Book book = bookRepository.findByBookId(bookId)
-                .orElseThrow(() -> new RuntimeException("도서 없음"));
-
-        if (!book.isBorrowed() || !book.getBorrowedBy().getId().equals(userId)) {
-            throw new IllegalStateException("반납할 수 없는 상태입니다.");
-        }
-
-        book.setBorrowed(false);
-        book.setBorrowedBy(null);
-        bookRepository.save(book);
-    }
-
-    public void fetchBooksFromOpenApi() {
+        public void fetchBooksFromOpenApi() {
         String apiKey = "716879564c6b696d3733576b524255";
         String url = "http://openapi.seoul.go.kr:8088/" + apiKey + "/json/SeoulLibraryBookInfo/1/50/";
 
@@ -93,5 +69,43 @@ public class BookService {
         } catch (Exception e) {
             throw new RuntimeException("OpenAPI 호출 또는 파싱 중 오류 발생", e);
         }
+    }
+
+    public BookRentalResponseDto getBookByBookId(String bookId) {
+        Book book = bookRepository.findByBookId(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("도서를 찾을 수 없습니다."));
+        return BookRentalResponseDto.fromEntity(book);
+    }
+
+    public List<BookRentalResponseDto> searchBooksByTitle(String title) {
+        return bookRepository.findByTitleContaining(title).stream()
+                .map(BookRentalResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public BookRentalResponseDto rentBook(String bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("책을 찾을 수 없습니다."));
+
+        if (!book.isAvailable()) {
+            return new BookRentalResponseDto("이미 대여 중인 책입니다.");
+        }
+
+        book.setAvailable(false);
+        bookRepository.save(book);
+        return new BookRentalResponseDto("대여 완료");
+    }
+
+    public BookRentalResponseDto returnBook(String bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("책을 찾을 수 없습니다."));
+
+        if (book.isAvailable()) {
+            return new BookRentalResponseDto("이미 반납된 책입니다.");
+        }
+
+        book.setAvailable(true);
+        bookRepository.save(book);
+        return new BookRentalResponseDto("반납 완료");
     }
 }

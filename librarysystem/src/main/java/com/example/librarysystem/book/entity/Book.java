@@ -1,26 +1,32 @@
 package com.example.librarysystem.book.entity;
 
-import com.example.librarysystem.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
     @Id
-    private String bookId;
+    @Column(nullable = false, unique = true)
+    private String bookId; // 외부 API의 LEND_NO
+
     private String title;
+
     private String author;
-    @Column(nullable = false)
-    private boolean isBorrowed = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "borrowed_by_user_id")
-    private User borrowedBy;
+    private boolean isAvailable; // 대여 가능 여부
 
-    private Boolean isAvailable;
+    @CreationTimestamp
+    private LocalDateTime rentedAt;
+
+    @UpdateTimestamp
+    private LocalDateTime dueDate;
 }

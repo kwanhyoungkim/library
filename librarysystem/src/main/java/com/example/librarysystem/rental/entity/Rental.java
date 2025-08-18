@@ -1,3 +1,4 @@
+/*
 package com.example.librarysystem.rental.entity;
 
 import com.example.librarysystem.book.entity.Book;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,3 +32,4 @@ public class Rental {
         return returnedAt != null;
     }
 }
+*/
