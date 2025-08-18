@@ -1,15 +1,12 @@
 package com.example.librarysystem.user.controller;
 
+import com.example.librarysystem.user.dto.UserDeleteRequestDto;
 import com.example.librarysystem.user.dto.UserLoginRequestDto;
 import com.example.librarysystem.user.dto.UserSignupRequestDto;
-import com.example.librarysystem.user.entity.User;
 import com.example.librarysystem.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,8 +22,16 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto requestDto) {
-        User user = userService.login(requestDto);
-        return ResponseEntity.ok(user.getName() + "님 로그인 성공!");
+    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto loginDto) {
+        userService.login(loginDto);
+        return  ResponseEntity.ok("로그인 되었습니다.");
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody UserDeleteRequestDto deleteDto){
+        userService.deleteUser(deleteDto);
+        return  ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
+    }
+
 }
+

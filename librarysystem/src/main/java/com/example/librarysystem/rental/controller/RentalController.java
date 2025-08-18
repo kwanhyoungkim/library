@@ -1,3 +1,4 @@
+/*
 package com.example.librarysystem.rental.controller;
 
 import com.example.librarysystem.rental.dto.RentalRequestDto;
@@ -15,15 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class RentalController {
     private final RentalService rentalService;
 
-    @PostMapping("/borrow")
-    public ResponseEntity<String> borrow(@RequestBody RentalRequestDto dto) {
-        rentalService.rentBook(dto.getUserId(), dto.getBookId());
+    @PostMapping("/lental")
+    public ResponseEntity<String> lental(@RequestBody RentalRequestDto dto) {
+        rentalService.rentBook(dto.getEmail(), dto.getPassword(), dto.getBookId());
         return ResponseEntity.ok("도서 대여 성공");
     }
 
     @PostMapping("/return")
     public ResponseEntity<String> returnBook(@RequestBody RentalRequestDto dto) {
-        rentalService.returnBook(dto.getUserId(), dto.getBookId());
+        rentalService.returnBook(dto.getEmail(), dto.getPassword(), dto.getBookId());
         return ResponseEntity.ok("도서 반납 성공");
     }
 }
+*/
